@@ -1,0 +1,1079 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>لوحة التحكم - نسخة تجريبية</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js">
+  </script>
+  <style>
+    /* ==================== DESIGN TOKENS ==================== */
+    :root {
+      --primary-50: #eef2ff;
+      --primary-100: #e0e7ff;
+      --primary-200: #c7d2fe;
+      --primary-300: #a5b4fc;
+      --primary-400: #818cf8;
+      --primary-500: #6366f1;
+      --primary-600: #4f46e5;
+      --primary-700: #4338ca;
+      --primary-800: #3730a3;
+      --primary-900: #312e81;
+      --neutral-50: #f8fafc;
+      --neutral-100: #f1f5f9;
+      --neutral-200: #e2e8f0;
+      --neutral-300: #cbd5e1;
+      --neutral-400: #94a3b8;
+      --neutral-500: #64748b;
+      --neutral-600: #475569;
+      --neutral-700: #334155;
+      --neutral-800: #1e293b;
+      --neutral-900: #0f172a;
+      --neutral-950: #020617;
+      --success-400: #34d399;
+      --success-500: #10b981;
+      --success-600: #059669;
+      --warning-400: #fbbf24;
+      --warning-500: #f59e0b;
+      --warning-600: #d97706;
+      --danger-400: #f87171;
+      --danger-500: #ef4444;
+      --danger-600: #dc2626;
+      --font-family: 'Tajawal', system-ui, -apple-system, sans-serif;
+      --text-xs: 0.75rem;
+      --text-sm: 0.875rem;
+      --text-base: 1rem;
+      --text-lg: 1.125rem;
+      --text-xl: 1.25rem;
+      --text-2xl: 1.5rem;
+      --text-3xl: 1.875rem;
+      --leading-tight: 1.25;
+      --leading-normal: 1.5;
+      --leading-relaxed: 1.75;
+      --spacing-1: 0.25rem;
+      --spacing-2: 0.5rem;
+      --spacing-3: 0.75rem;
+      --spacing-4: 1rem;
+      --spacing-5: 1.25rem;
+      --spacing-6: 1.5rem;
+      --spacing-8: 2rem;
+      --spacing-10: 2.5rem;
+      --spacing-12: 3rem;
+      --spacing-16: 4rem;
+      --radius-sm: 0.5rem;
+      --radius-md: 0.75rem;
+      --radius-lg: 1rem;
+      --radius-xl: 1.5rem;
+      --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+      --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.15);
+      --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
+      --sidebar-width: 272px;
+      --header-height: 64px;
+      --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ==================== RESET & BASE ==================== */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: var(--font-family);
+      background: var(--neutral-950);
+      color: var(--neutral-200);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: var(--leading-normal);
+      letter-spacing: 0;
+      direction: rtl;
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--neutral-900); }
+    ::-webkit-scrollbar-thumb { background: var(--neutral-600); border-radius: 3px; }
+
+    /* ==================== LOGIN PAGE ==================== */
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-4);
+      position: relative;
+      overflow: hidden;
+      background: var(--neutral-950);
+    }
+    .login-container::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(99, 102, 241, 0.06) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .login-card {
+      position: relative;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(30, 41, 59, 0.7) 100%);
+      backdrop-filter: blur(24px);
+      border: 1px solid rgba(71, 85, 105, 0.3);
+      border-radius: var(--radius-xl);
+      padding: var(--spacing-12) var(--spacing-10);
+      width: 100%;
+      max-width: 440px;
+      box-shadow: var(--shadow-xl), var(--shadow-glow);
+    }
+    .login-header {
+      text-align: center;
+      margin-bottom: var(--spacing-8);
+    }
+    .login-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(139, 92, 246, 0.15) 100%);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-lg);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--spacing-6);
+      box-shadow: 0 0 30px rgba(99, 102, 241, 0.15);
+    }
+    .login-icon svg {
+      width: 32px;
+      height: 32px;
+      color: var(--primary-400);
+    }
+    .login-card h1 {
+      font-size: var(--text-2xl);
+      font-weight: 800;
+      color: white;
+      margin-bottom: var(--spacing-2);
+      letter-spacing: -0.02em;
+    }
+    .login-card .subtitle {
+      color: var(--neutral-400);
+      font-size: var(--text-sm);
+      font-weight: 400;
+    }
+
+    .demo-notice {
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-4);
+      margin-bottom: var(--spacing-6);
+      color: var(--warning-400);
+      font-size: var(--text-sm);
+      display: flex;
+      align-items: flex-start;
+      gap: var(--spacing-3);
+      line-height: var(--leading-relaxed);
+      text-align: right;
+    }
+    .demo-notice svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      opacity: 0.8;
+    }
+
+    .input-group { margin-bottom: var(--spacing-5); }
+    .input-group label {
+      display: block;
+      margin-bottom: var(--spacing-2);
+      font-size: var(--text-sm);
+      color: var(--neutral-400);
+      font-weight: 500;
+      text-align: right;
+    }
+    .input-wrapper { position: relative; }
+    .input-wrapper svg {
+      position: absolute;
+      right: var(--spacing-4);
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      color: var(--neutral-500);
+      pointer-events: none;
+      transition: color var(--transition-base);
+    }
+    .input-group input {
+      width: 100%;
+      padding: var(--spacing-3) var(--spacing-12) var(--spacing-3) var(--spacing-4);
+      background: var(--neutral-900);
+      border: 1px solid var(--neutral-700);
+      border-radius: var(--radius-md);
+      color: var(--neutral-100);
+      font-size: var(--text-sm);
+      font-family: var(--font-family);
+      outline: none;
+      transition: all var(--transition-base);
+      text-align: right;
+      line-height: var(--leading-normal);
+    }
+    .input-group input:focus {
+      border-color: var(--primary-500);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+      background: var(--neutral-800);
+    }
+    .input-group input:focus + svg,
+    .input-group input:focus ~ svg { color: var(--primary-400); }
+    .input-group input::placeholder { color: var(--neutral-600); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-3) var(--spacing-6);
+      border: none;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: var(--text-sm);
+      font-family: var(--font-family);
+      cursor: pointer;
+      transition: all var(--transition-base);
+      gap: var(--spacing-2);
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary {
+      background: var(--primary-500);
+      color: white;
+      width: 100%;
+      padding: var(--spacing-4);
+      font-size: var(--text-base);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+    .btn-primary:hover {
+      background: var(--primary-600);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+      transform: translateY(-1px);
+    }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-danger { background: var(--danger-500); color: white; }
+    .btn-danger:hover { background: var(--danger-600); }
+    .btn-sm { padding: var(--spacing-2) var(--spacing-3); font-size: var(--text-xs); border-radius: var(--radius-sm); }
+
+    .alert {
+      padding: var(--spacing-3) var(--spacing-4);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--spacing-4);
+      font-size: var(--text-sm);
+      display: none;
+      align-items: center;
+      gap: var(--spacing-2);
+      text-align: right;
+      line-height: var(--leading-normal);
+    }
+    .alert-error {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: var(--danger-400);
+    }
+
+    /* ==================== APP LAYOUT ==================== */
+    .app-layout { display: flex; min-height: 100vh; }
+
+    /* ==================== SIDEBAR ==================== */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: linear-gradient(180deg, var(--neutral-900) 0%, var(--neutral-950) 100%);
+      border-left: 1px solid rgba(51, 65, 85, 0.5);
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      right: 0;
+      z-index: 40;
+      transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+    }
+    .sidebar-header {
+      padding: var(--spacing-6);
+      border-bottom: 1px solid rgba(51, 65, 85, 0.4);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-3);
+      text-align: right;
+    }
+    .sidebar-header .logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+    }
+    .sidebar-nav { flex: 1; padding: var(--spacing-4); }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-3);
+      padding: var(--spacing-3) var(--spacing-4);
+      border-radius: var(--radius-md);
+      color: var(--neutral-400);
+      cursor: pointer;
+      margin-bottom: var(--spacing-1);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      font-family: var(--font-family);
+      transition: all var(--transition-base);
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: right;
+      position: relative;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--neutral-200); }
+    .nav-item.active {
+      background: rgba(99, 102, 241, 0.12);
+      color: var(--primary-300);
+    }
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 25%;
+      height: 50%;
+      width: 3px;
+      background: var(--primary-500);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
+    .nav-item svg { flex-shrink: 0; }
+
+    .sidebar-footer {
+      padding: var(--spacing-4) var(--spacing-4);
+      border-top: 1px solid rgba(51, 65, 85, 0.4);
+      margin-top: auto;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-3);
+      margin-bottom: var(--spacing-3);
+      text-align: right;
+    }
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary-500), #8b5cf6);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: var(--text-sm);
+      color: white;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+    }
+
+    /* ==================== MAIN CONTENT ==================== */
+    .main-content {
+      flex: 1;
+      margin-right: var(--sidebar-width);
+      transition: margin-right 300ms cubic-bezier(0.4, 0, 0.2, 1);
+      min-height: 100vh;
+      text-align: right;
+      background: var(--neutral-950);
+      overflow-x: hidden;
+    }
+    .topbar {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(51, 65, 85, 0.4);
+      padding: 0 var(--spacing-6);
+      height: var(--header-height);
+      display: flex;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+    .menu-toggle {
+      display: none;
+      background: transparent;
+      border: none;
+      color: var(--neutral-400);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: var(--spacing-2);
+      border-radius: var(--radius-md);
+      margin-left: auto;
+      transition: background var(--transition-base);
+    }
+    .menu-toggle:hover { background: rgba(255,255,255,0.05); }
+    .page-content {
+      padding: var(--spacing-8);
+      overflow-x: hidden;
+    }
+
+    /* ==================== CHART WRAPPER ==================== */
+    .chart-wrapper {
+      position: relative;
+      width: 100%;
+      height: 300px;
+    }
+    .chart-wrapper canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* ==================== STAT CARDS ==================== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--spacing-6);
+      margin-bottom: var(--spacing-8);
+    }
+    .stat-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(30, 41, 59, 0.4) 100%);
+      border: 1px solid rgba(71, 85, 105, 0.25);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-6);
+      text-align: right;
+      box-shadow: var(--shadow-card);
+      transition: all var(--transition-base);
+      cursor: default;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+      border-color: rgba(99, 102, 241, 0.3);
+    }
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary-500), transparent);
+      opacity: 0;
+      transition: opacity var(--transition-base);
+    }
+    .stat-card:hover::after { opacity: 1; }
+    .stat-card .icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--spacing-4);
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+    .stat-card .stat-label {
+      color: var(--neutral-400);
+      font-size: var(--text-sm);
+    }
+    .stat-card .stat-change {
+      font-size: var(--text-xs);
+      margin-top: var(--spacing-2);
+      font-weight: 500;
+    }
+
+    /* ==================== CHARTS GRID ==================== */
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: var(--spacing-6);
+      margin-bottom: var(--spacing-8);
+    }
+    .chart-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(30, 41, 59, 0.4) 100%);
+      border: 1px solid rgba(71, 85, 105, 0.25);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-6);
+      text-align: right;
+      box-shadow: var(--shadow-card);
+      transition: box-shadow var(--transition-base);
+    }
+    .chart-card:hover { box-shadow: var(--shadow-lg); }
+    .chart-card h3 {
+      margin-bottom: var(--spacing-4);
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--neutral-200);
+    }
+
+    /* ==================== TABLE ==================== */
+    .table-container {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(30, 41, 59, 0.4) 100%);
+      border: 1px solid rgba(71, 85, 105, 0.25);
+      border-radius: var(--radius-lg);
+      overflow-x: auto;
+      margin-top: var(--spacing-4);
+      box-shadow: var(--shadow-card);
+    }
+    table { width: 100%; border-collapse: collapse; min-width: 700px; }
+    th, td {
+      padding: var(--spacing-3) var(--spacing-4);
+      text-align: right;
+      border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+    }
+    th {
+      color: var(--neutral-400);
+      font-weight: 600;
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: rgba(15, 23, 42, 0.3);
+    }
+    td { font-size: var(--text-sm); }
+    tbody tr { transition: background var(--transition-base); }
+    tbody tr:nth-child(even) { background: rgba(255,255,255,0.015); }
+    tbody tr:hover { background: rgba(99, 102, 241, 0.06); }
+    .badge {
+      padding: var(--spacing-1) var(--spacing-3);
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      display: inline-block;
+      letter-spacing: 0.02em;
+    }
+    .badge-success { background: rgba(16, 185, 129, 0.15); color: var(--success-400); }
+    .badge-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning-400); }
+    .badge-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger-400); }
+
+    /* ==================== MODAL ==================== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: var(--spacing-4);
+      animation: fadeIn 200ms ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal {
+      background: var(--neutral-800);
+      border: 1px solid rgba(71, 85, 105, 0.4);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-8);
+      width: 100%;
+      max-width: 480px;
+      text-align: right;
+      box-shadow: var(--shadow-xl);
+      animation: slideUp 300ms ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .modal h2 { margin-bottom: var(--spacing-6); font-size: var(--text-xl); font-weight: 700; }
+    .modal .input-group { margin-bottom: var(--spacing-4); }
+    .modal .input-group select {
+      width: 100%;
+      padding: var(--spacing-3) var(--spacing-4);
+      background: var(--neutral-900);
+      border: 1px solid var(--neutral-700);
+      border-radius: var(--radius-md);
+      color: var(--neutral-100);
+      font-size: var(--text-sm);
+      font-family: var(--font-family);
+      outline: none;
+      text-align: right;
+      transition: border-color var(--transition-base);
+    }
+    .modal .input-group select:focus { border-color: var(--primary-500); }
+    .modal-actions {
+      display: flex;
+      gap: var(--spacing-3);
+      justify-content: flex-start;
+      margin-top: var(--spacing-6);
+      flex-direction: row-reverse;
+    }
+
+    /* ==================== TOAST ==================== */
+    .toast-container {
+      position: fixed;
+      top: var(--spacing-6);
+      left: var(--spacing-6);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-3);
+    }
+    .toast {
+      padding: var(--spacing-3) var(--spacing-5);
+      border-radius: var(--radius-md);
+      color: white;
+      font-weight: 500;
+      font-size: var(--text-sm);
+      box-shadow: var(--shadow-lg);
+      animation: slideInRight 300ms ease;
+      max-width: 380px;
+      text-align: right;
+      font-family: var(--font-family);
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(-100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 1024px) {
+      .sidebar { transform: translateX(100%); }
+      .sidebar.open {
+        transform: translateX(0);
+        box-shadow: -8px 0 30px rgba(0, 0, 0, 0.6);
+      }
+      .main-content {
+        margin-right: 0;
+        overflow-x: hidden;
+      }
+      .page-content {
+        padding: var(--spacing-4);
+        overflow-x: hidden;
+      }
+      .page-content h1 {
+        white-space: normal;
+        word-break: break-word;
+        margin-right: 0;
+        padding-right: 0;
+      }
+      .menu-toggle { display: block; }
+      .chart-grid { grid-template-columns: 1fr; }
+      .chart-wrapper { height: 280px; }
+      .topbar {
+        padding: 0 var(--spacing-4);
+      }
+    }
+    @media (max-width: 640px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .page-content { padding: var(--spacing-4); }
+      .login-card { padding: var(--spacing-8) var(--spacing-6); max-width: 100%; }
+      .chart-grid { grid-template-columns: 1fr; }
+      .chart-wrapper { height: 260px; }
+      .page-content h1 {
+        font-size: var(--text-xl);
+        margin-right: 0;
+        padding-right: 0;
+        white-space: normal;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+      <div class="login-card">
+        <div class="login-header">
+          <div class="login-icon">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+            </svg>
+          </div>
+          <h1>لوحة التحكم</h1>
+          <p class="subtitle">تسجيل الدخول إلى حسابك</p>
+        </div>
+        
+        <div class="demo-notice">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+          </svg>
+          <span>هذا موقع تجريبي. أدخل أي اسم مستخدم وكلمة مرور للدخول.</span>
+        </div>
+        
+        <div id="loginError" class="alert alert-error"></div>
+        
+        <form id="loginForm">
+          <div class="input-group">
+            <label>اسم المستخدم</label>
+            <div class="input-wrapper">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+              </svg>
+              <input type="text" id="username" placeholder="أدخل اسم المستخدم" required autocomplete="off">
+            </div>
+          </div>
+          
+          <div class="input-group">
+            <label>كلمة المرور</label>
+            <div class="input-wrapper">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+              </svg>
+              <input type="password" id="password" placeholder="أدخل كلمة المرور" required>
+            </div>
+          </div>
+          
+          <button type="submit" class="btn btn-primary">
+            تسجيل الدخول
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="appMain" style="display:none;">
+      <div class="app-layout">
+        <aside id="sidebar" class="sidebar">
+          <div class="sidebar-header">
+            <div>
+              <div style="font-weight:700; font-size:var(--text-base); color:white;">لوحة التحكم</div>
+              <div style="font-size:var(--text-xs); color:var(--neutral-500);">نظام الإدارة</div>
+            </div>
+            <div class="logo">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+          </div>
+          <nav class="sidebar-nav">
+            <button class="nav-item active" data-page="dashboard">
+              لوحة المعلومات
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+              </svg>
+            </button>
+            <button class="nav-item" data-page="users">
+              المستخدمين
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+              </svg>
+            </button>
+            <button class="nav-item" data-page="analytics">
+              التحليلات
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+            </button>
+            <button class="nav-item" data-page="settings">
+              الإعدادات
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </button>
+          </nav>
+          <div class="sidebar-footer">
+            <div class="user-info">
+              <div>
+                <div style="font-size:var(--text-sm); font-weight:600; color:white;" id="sidebarUser"></div>
+                <div style="font-size:var(--text-xs); color:var(--neutral-500);" id="sidebarRole"></div>
+              </div>
+              <div class="user-avatar" id="sidebarAvatar"></div>
+            </div>
+            <button id="logoutBtn" class="btn btn-sm" style="background:transparent; color:var(--neutral-400); width:100%; justify-content:flex-end;">
+              تسجيل الخروج
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+              </svg>
+            </button>
+          </div>
+        </aside>
+
+        <div class="main-content">
+          <header class="topbar">
+            <div style="flex:1;"></div>
+            <button id="menuToggle" class="menu-toggle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 12h18M3 6h18M3 18h18"/>
+              </svg>
+            </button>
+          </header>
+          <div class="page-content" id="pageContent"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    (function() {
+      const Security = {
+        encodeBase64(str) {
+          try { return btoa(unescape(encodeURIComponent(str))); }
+          catch (e) {
+            try {
+              const bytes = new TextEncoder().encode(str);
+              let binary = '';
+              bytes.forEach(b => binary += String.fromCharCode(b));
+              return btoa(binary);
+            } catch (e2) {
+              let binary = '';
+              for (let i = 0; i < str.length; i++) {
+                const cc = str.charCodeAt(i);
+                binary += cc < 128 ? String.fromCharCode(cc) :
+                          cc < 2048 ? String.fromCharCode((cc>>6)|192)+String.fromCharCode((cc&63)|128) :
+                          String.fromCharCode((cc>>12)|224)+String.fromCharCode(((cc>>6)&63)|128)+String.fromCharCode((cc&63)|128);
+              }
+              return btoa(binary);
+            }
+          }
+        },
+        decodeBase64(str) {
+          try { return decodeURIComponent(escape(atob(str))); }
+          catch (e) {
+            try {
+              const binary = atob(str);
+              const bytes = new Uint8Array(binary.length);
+              for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+              return new TextDecoder().decode(bytes);
+            } catch (e2) { return atob(str); }
+          }
+        },
+        generateToken(user) {
+          const payload = { id: user.id || Date.now(), username: user.username || 'مستخدم', role: user.role || 'مدير النظام', exp: Date.now() + 3600000, iat: Date.now() };
+          try { return this.encodeBase64(JSON.stringify(payload)); }
+          catch (e) { throw new Error('فشل في إنشاء رمز الدخول'); }
+        },
+        verifyToken(token) {
+          try {
+            if (!token) return null;
+            const payload = JSON.parse(this.decodeBase64(token));
+            if (payload.exp < Date.now()) return null;
+            return { id: payload.id, username: payload.username || 'مستخدم', role: payload.role || 'مدير النظام' };
+          } catch (e) { return null; }
+        },
+        sanitize(str) {
+          if (typeof str !== 'string') return str;
+          const div = document.createElement('div');
+          div.textContent = str;
+          return div.innerHTML;
+        }
+      };
+
+      const DB = {
+        customers: [
+          { id: 1, name: 'أحمد محمد', email: 'ahmed@example.com', role: 'مستخدم', status: 'نشط', joined: '2024-01-15' },
+          { id: 2, name: 'سارة علي', email: 'sara@example.com', role: 'محرر', status: 'نشط', joined: '2024-02-20' },
+          { id: 3, name: 'عمر حسن', email: 'omar@example.com', role: 'مستخدم', status: 'غير نشط', joined: '2024-03-10' },
+          { id: 4, name: 'ليلى إبراهيم', email: 'laila@example.com', role: 'مشرف', status: 'نشط', joined: '2024-04-05' },
+          { id: 5, name: 'خالد محمود', email: 'khaled@example.com', role: 'مستخدم', status: 'موقوف', joined: '2024-05-01' }
+        ],
+        stats: {
+          totalUsers: 15234, activeUsers: 11200, revenue: 89750, traffic: 45230,
+          chartData: [
+            { name: 'يناير', users: 4000, revenue: 2400 },
+            { name: 'فبراير', users: 3000, revenue: 1398 },
+            { name: 'مارس', users: 5000, revenue: 9800 },
+            { name: 'أبريل', users: 4780, revenue: 3908 },
+            { name: 'مايو', users: 5890, revenue: 4800 },
+            { name: 'يونيو', users: 6390, revenue: 3800 }
+          ]
+        }
+      };
+
+      let currentUser = null;
+      let currentPage = 'dashboard';
+      let customers = [...DB.customers];
+      let charts = {};
+
+      const $ = (sel) => document.querySelector(sel);
+      const $$ = (sel) => document.querySelectorAll(sel);
+
+      function showToast(message, type = 'success') {
+        const container = $('#toastContainer');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.style.background = type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6';
+        toast.textContent = message;
+        container.appendChild(toast);
+        setTimeout(() => { if (toast.parentNode) toast.remove(); }, 3000);
+      }
+
+      function toggleSidebar() { const s = $('#sidebar'); if (s) s.classList.toggle('open'); }
+
+      function navigateTo(page) {
+        currentPage = page;
+        $$('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.page === page));
+        Object.values(charts).forEach(c => { if (c && typeof c.destroy === 'function') c.destroy(); });
+        charts = {};
+        renderPage();
+        if (window.innerWidth < 1024) { const s = $('#sidebar'); if (s) s.classList.remove('open'); }
+      }
+
+      function renderDashboard() {
+        if (!currentUser) return;
+        const s = DB.stats;
+        const h = `
+          <h1 style="font-size:var(--text-2xl);font-weight:800;color:white;margin-bottom:var(--spacing-2);">لوحة المعلومات</h1>
+          <p style="color:var(--neutral-400);margin-bottom:var(--spacing-8);font-size:var(--text-sm);">مرحباً بك، ${Security.sanitize(currentUser.username)}</p>
+          <div class="stats-grid">
+            <div class="stat-card"><div class="icon" style="background:rgba(99,102,241,0.12);color:var(--primary-400);">${s.totalUsers.toLocaleString()}</div><div class="stat-label">إجمالي المستخدمين</div><div class="stat-change" style="color:var(--success-400);">+12.5% من الشهر الماضي</div></div>
+            <div class="stat-card"><div class="icon" style="background:rgba(16,185,129,0.12);color:var(--success-400);">${s.activeUsers.toLocaleString()}</div><div class="stat-label">المستخدمين النشطين</div><div class="stat-change" style="color:var(--success-400);">+8.2% من الشهر الماضي</div></div>
+            <div class="stat-card"><div class="icon" style="background:rgba(245,158,11,0.12);color:var(--warning-400);">$${(s.revenue/1000).toFixed(1)}k</div><div class="stat-label">الإيرادات</div><div class="stat-change" style="color:var(--success-400);">+23.1% من الشهر الماضي</div></div>
+            <div class="stat-card"><div class="icon" style="background:rgba(139,92,246,0.12);color:#a78bfa;">${s.traffic.toLocaleString()}</div><div class="stat-label">الزيارات</div><div class="stat-change" style="color:var(--danger-400);">-3.4% من الشهر الماضي</div></div>
+          </div>
+          <div class="chart-grid">
+            <div class="chart-card"><h3>الإيرادات الشهرية</h3><div class="chart-wrapper"><canvas id="revenueChart"></canvas></div></div>
+            <div class="chart-card"><h3>نمو المستخدمين</h3><div class="chart-wrapper"><canvas id="userGrowthChart"></canvas></div></div>
+          </div>`;
+        $('#pageContent').innerHTML = h;
+        setTimeout(() => {
+          const d = DB.stats.chartData;
+          const c1 = document.getElementById('revenueChart');
+          if (c1) charts.revenue = new Chart(c1, { type: 'bar', data: { labels: d.map(x=>x.name), datasets: [{ label: 'الإيرادات', data: d.map(x=>x.revenue), backgroundColor: '#6366f1', borderRadius: 8, borderSkipped: false }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#94a3b8', font: { family: 'Tajawal' } }, grid: { color: '#1e293b' } }, y: { ticks: { color: '#94a3b8', callback: v=>'$'+v, font: { family: 'Tajawal' } }, grid: { color: '#1e293b' } } } } });
+          const c2 = document.getElementById('userGrowthChart');
+          if (c2) charts.users = new Chart(c2, { type: 'line', data: { labels: d.map(x=>x.name), datasets: [{ label: 'المستخدمين', data: d.map(x=>x.users), borderColor: '#8b5cf6', backgroundColor: 'rgba(139,92,246,0.08)', fill: true, tension: 0.4, pointBackgroundColor: '#8b5cf6', pointRadius: 4, pointHoverRadius: 6, borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#94a3b8', font: { family: 'Tajawal' } }, grid: { color: '#1e293b' } }, y: { ticks: { color: '#94a3b8', font: { family: 'Tajawal' } }, grid: { color: '#1e293b' } } } } });
+        }, 100);
+      }
+
+      function renderUsers() {
+        let rows = customers.map(c => `<tr><td style="font-weight:600;color:var(--neutral-100);">${Security.sanitize(c.name)}</td><td style="color:var(--neutral-400);">${Security.sanitize(c.email)}</td><td><span class="badge" style="background:rgba(99,102,241,0.12);color:var(--primary-400);">${Security.sanitize(c.role)}</span></td><td><span class="badge badge-${c.status==='نشط'?'success':c.status==='غير نشط'?'warning':'danger'}">${Security.sanitize(c.status)}</span></td><td style="color:var(--neutral-400);">${c.joined}</td><td><button class="btn btn-sm" style="background:var(--primary-500);color:white;margin-left:var(--spacing-2);" onclick="editUser(${c.id})">تعديل</button><button class="btn btn-sm btn-danger" onclick="deleteUser(${c.id})">حذف</button></td></tr>`).join('');
+        $('#pageContent').innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--spacing-6);flex-wrap:wrap;gap:var(--spacing-4);"><div><h1 style="font-size:var(--text-2xl);font-weight:800;color:white;margin-bottom:var(--spacing-2);">إدارة المستخدمين</h1><p style="color:var(--neutral-400);font-size:var(--text-sm);">إدارة مستخدمي النظام والصلاحيات</p></div><button class="btn" style="background:var(--primary-500);color:white;" onclick="openUserModal()">إضافة مستخدم</button></div><div class="table-container"><table><thead><tr><th>الاسم</th><th>البريد الإلكتروني</th><th>الدور</th><th>الحالة</th><th>تاريخ الانضمام</th><th>الإجراءات</th></tr></thead><tbody>${rows}</tbody></table></div><div id="userModalContainer"></div>`;
+      }
+
+      function openUserModal(user = null) {
+        const isEdit = !!user;
+        const m = `
+          <div class="modal-overlay" id="userModal" onclick="if(event.target===this)closeModal()">
+            <div class="modal"><h2>${isEdit?'تعديل مستخدم':'إضافة مستخدم جديد'}</h2>
+              <form id="userForm">
+                <div class="input-group"><label>الاسم الكامل</label><input type="text" id="userName" value="${isEdit?Security.sanitize(user.name):''}" required></div>
+                <div class="input-group"><label>البريد الإلكتروني</label><input type="email" id="userEmail" value="${isEdit?Security.sanitize(user.email):''}" required></div>
+                <div class="input-group"><label>الدور</label><select id="userRole"><option ${isEdit&&user.role==='مستخدم'?'selected':''}>مستخدم</option><option ${isEdit&&user.role==='محرر'?'selected':''}>محرر</option><option ${isEdit&&user.role==='مشرف'?'selected':''}>مشرف</option><option ${isEdit&&user.role==='مدير'?'selected':''}>مدير</option></select></div>
+                <div class="input-group"><label>الحالة</label><select id="userStatus"><option ${isEdit&&user.status==='نشط'?'selected':''}>نشط</option><option ${isEdit&&user.status==='غير نشط'?'selected':''}>غير نشط</option><option ${isEdit&&user.status==='موقوف'?'selected':''}>موقوف</option></select></div>
+                <input type="hidden" id="userId" value="${isEdit?user.id:''}">
+                <div class="modal-actions"><button type="button" class="btn btn-sm" style="background:var(--neutral-700);color:white;" onclick="closeModal()">إلغاء</button><button type="submit" class="btn btn-sm" style="background:var(--primary-500);color:white;">${isEdit?'تحديث':'إضافة'}</button></div>
+              </form></div></div>`;
+        const c = document.getElementById('userModalContainer');
+        if (c) { c.innerHTML = m; document.getElementById('userForm').addEventListener('submit', handleUserSubmit); }
+      }
+      function closeModal() { const m = document.getElementById('userModal'); if (m) m.remove(); }
+      function handleUserSubmit(e) {
+        e.preventDefault();
+        const id = document.getElementById('userId').value;
+        const name = Security.sanitize(document.getElementById('userName').value);
+        const email = Security.sanitize(document.getElementById('userEmail').value);
+        const role = Security.sanitize(document.getElementById('userRole').value);
+        const status = Security.sanitize(document.getElementById('userStatus').value);
+        if (id) { const i = customers.findIndex(c => c.id == id); if (i !== -1) customers[i] = {...customers[i], name, email, role, status}; showToast('تم تحديث المستخدم بنجاح'); }
+        else { customers.push({ id: Date.now(), name, email, role, status, joined: new Date().toISOString().split('T')[0] }); showToast('تمت إضافة المستخدم بنجاح'); }
+        closeModal(); renderUsers();
+      }
+      window.editUser = (id) => { const u = customers.find(c => c.id === id); if (u) openUserModal(u); };
+      window.deleteUser = (id) => { if (confirm('هل أنت متأكد من حذف هذا المستخدم؟')) { customers = customers.filter(c => c.id !== id); showToast('تم حذف المستخدم بنجاح'); renderUsers(); } };
+      window.openUserModal = () => openUserModal(null);
+      window.closeModal = closeModal;
+
+      function renderAnalytics() {
+        $('#pageContent').innerHTML = `<h1 style="font-size:var(--text-2xl);font-weight:800;color:white;margin-bottom:var(--spacing-2);">التحليلات</h1><p style="color:var(--neutral-400);margin-bottom:var(--spacing-8);font-size:var(--text-sm);">إحصائيات وتحليلات مفصلة</p><div class="chart-grid"><div class="chart-card"><h3>مصادر الزيارات</h3><div class="chart-wrapper"><canvas id="trafficPieChart"></canvas></div></div><div class="chart-card"><h3>نظرة عامة على الزيارات</h3><div class="chart-wrapper"><canvas id="trafficOverviewChart"></canvas></div></div></div>`;
+        setTimeout(() => {
+          const pc = document.getElementById('trafficPieChart');
+          if (pc) charts.pie = new Chart(pc, { type: 'doughnut', data: { labels: ['كمبيوتر','جوال','جهاز لوحي'], datasets: [{ data: [45,35,20], backgroundColor: ['#6366f1','#8b5cf6','#ec4899'], borderWidth: 0, hoverBorderWidth: 3, hoverBorderColor: '#0f172a' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 20, usePointStyle: true, font: { family: 'Tajawal', size: 13 } } } } } });
+          const lc = document.getElementById('trafficOverviewChart');
+          if (lc) charts.traffic = new Chart(lc, { type: 'line', data: { labels: DB.stats.chartData.map(d=>d.name), datasets: [{ label: 'الزيارات', data: DB.stats.chartData.map(d=>d.revenue*0.8), borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.06)', fill: true, tension: 0.4, borderWidth: 2, pointBackgroundColor: '#10b981' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#94a3b8', font: { family: 'Tajawal' } }, grid: { color: '#1e293b' } }, y: { ticks: { color: '#94a3b8', font: { family: 'Tajawal' } }, grid: { color: '#1e293b' } } } } });
+        }, 100);
+      }
+
+      function renderSettings() {
+        $('#pageContent').innerHTML = `<h1 style="font-size:var(--text-2xl);font-weight:800;color:white;margin-bottom:var(--spacing-2);">الإعدادات</h1><p style="color:var(--neutral-400);margin-bottom:var(--spacing-8);font-size:var(--text-sm);">إدارة تفضيلات التطبيق</p><div class="chart-card" style="max-width:640px;"><form id="settingsForm"><div class="input-group"><label>اسم الموقع</label><input type="text" id="siteName" value="لوحة التحكم"></div><div class="input-group" style="display:flex;align-items:center;justify-content:space-between;"><label style="position:relative;display:inline-block;width:48px;height:26px;cursor:pointer;"><input type="checkbox" id="notifications" checked style="opacity:0;width:0;height:0;"><span style="position:absolute;top:0;left:0;right:0;bottom:0;background:var(--primary-500);border-radius:26px;transition:0.3s;"></span></label><span style="color:var(--neutral-200);font-weight:500;">إشعارات البريد الإلكتروني</span></div><button type="submit" class="btn" style="background:var(--primary-500);color:white;margin-top:var(--spacing-6);">حفظ التغييرات</button></form></div>`;
+        document.getElementById('settingsForm').addEventListener('submit', (e) => { e.preventDefault(); showToast('تم حفظ الإعدادات بنجاح'); });
+      }
+
+      function renderPage() {
+        switch (currentPage) {
+          case 'dashboard': renderDashboard(); break;
+          case 'users': renderUsers(); break;
+          case 'analytics': renderAnalytics(); break;
+          case 'settings': renderSettings(); break;
+          default: renderDashboard();
+        }
+      }
+
+      function login(username) {
+        const clean = Security.sanitize(username) || 'مستخدم';
+        const user = { id: Date.now(), username: clean, role: 'مدير النظام' };
+        try {
+          localStorage.setItem('auth_token', Security.generateToken(user));
+          currentUser = user;
+          return user;
+        } catch (e) {
+          const err = document.getElementById('loginError');
+          if (err) { err.style.display = 'flex'; err.textContent = 'حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى.'; }
+          return null;
+        }
+      }
+
+      function logout() {
+        localStorage.removeItem('auth_token');
+        currentUser = null;
+        Object.values(charts).forEach(c => { if (c && typeof c.destroy === 'function') c.destroy(); });
+        charts = {};
+        document.getElementById('appMain').style.display = 'none';
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('loginForm').reset();
+        const err = document.getElementById('loginError'); if (err) err.style.display = 'none';
+      }
+
+      function checkAuth() {
+        try {
+          const t = localStorage.getItem('auth_token');
+          if (t) { const p = Security.verifyToken(t); if (p) { currentUser = p; showApp(); return; } localStorage.removeItem('auth_token'); }
+        } catch (e) { localStorage.removeItem('auth_token'); }
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('appMain').style.display = 'none';
+      }
+
+      function showApp() {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('appMain').style.display = 'block';
+        document.getElementById('sidebarAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
+        document.getElementById('sidebarUser').textContent = currentUser.username;
+        document.getElementById('sidebarRole').textContent = currentUser.role || 'مدير النظام';
+        renderPage();
+      }
+
+      document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const u = document.getElementById('username').value, p = document.getElementById('password').value, err = document.getElementById('loginError');
+        if (!u.trim() || !p.trim()) { if (err) { err.style.display = 'flex'; err.textContent = 'الرجاء إدخال اسم المستخدم وكلمة المرور'; } return; }
+        if (err) err.style.display = 'none';
+        if (login(u)) { showApp(); showToast('تم تسجيل الدخول بنجاح'); }
+      });
+      document.getElementById('logoutBtn').addEventListener('click', logout);
+      document.getElementById('menuToggle').addEventListener('click', toggleSidebar);
+      document.querySelectorAll('.nav-item').forEach(b => b.addEventListener('click', function() { navigateTo(this.dataset.page); }));
+      document.addEventListener('click', function(e) {
+        if (window.innerWidth < 1024) {
+          const s = document.getElementById('sidebar'), t = document.getElementById('menuToggle');
+          if (s && t && !s.contains(e.target) && e.target !== t && s.classList.contains('open')) s.classList.remove('open');
+        }
+      });
+      checkAuth();
+    })();
+  </script>
+</body>
+</html>
